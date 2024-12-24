@@ -1,1 +1,6 @@
 implemention of Block-Champagne in realistic data (code will be uploaded soon)
+
+The SPM data contains multi-modality data from subjects undergoing face-processing task. The detailed information can be found in "A multi-subject, multi-modal human neuroimaging dataset". Here we provide the fMRI and ERP data from subject #15, following the guideline in SPM12 manual
+
+The DBS data contains high-density EEG data collected concurrently with deep brain stimulation. The detailed information can be found in "Simultaneous human intracerebral stimulation and HD-EEG: ground-truth for source localization methods". Here we provide the data from subject #1 and subject #7, following the processing pipeline provided in https://gin.g-node.org/ezemikulan/Localize-MI.
+The processed data can be downloaded from https://drive.google.com/file/d/1o4a0wk2tFgYJWmOAvtlDg_g46ahflukW/view?usp=drive_link
