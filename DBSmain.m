@@ -1,6 +1,6 @@
 addpath(genpath('./'));
 %% Load DBS data
-subj = 'sub-01'; run = 'run-01';
+subj = 'sub-07'; run = 'run-01';
 load([subj,'_',run,'_StimulatedData.mat']);
 load([subj,'_',run,'_Forward.mat']);
 eT = [-0.01,0.01];
@@ -46,11 +46,28 @@ Cortex_low.Atlas(1).Name='Structures';
 Cortex_low.Atlas(1).Scouts = Scouts;
 
 [nSensor,nSource] = size(L);
-
+%% whiten
+preStimT = [-0.05, -0.01];
+[~,pres] = min(abs(epoTime-preStimT(1)));
+[~,pree] = min(abs(epoTime-preStimT(2)));
+preStim = avgData(goodlist,pres:pree)*1e6;
+covN = cov(preStim');
+rankn = min(rank(covN),rank(B));
+% sidx = find(cumsum(S)>0.9*sum(S),1); % use pca to reduce dimension
+% rankn = min(rankn, sidx);
+[U, S, ~] = svd(covN);
+S = diag(S);
+S = 1./S;
+S(rankn+1:end) = 0;
+whiteN = diag(sqrt(S))*U';
+whiteN = whiteN(1:rankn,:);
+B = whiteN*B;
+L = whiteN*L;
 %% ESI
-J = BlockChampagne(L,B,Cortex_low.VertConn,[],'knb',1);
+J = BlockChampagne(L,B,Cortex_low.VertConn,[],'knb',2);
 [~,maxT] = max(std(B,[],1));
-plotStim_source(abs(J(1:nSource,maxT)),Cortex_low,stim_coords,0.5);view([90,10]);
+%%
+plotStim_source(sum(J(1:nSource,:).^2,2),Cortex_low,stim_coords,0.1);view([90,10]);
 
 
 
