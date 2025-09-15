@@ -186,7 +186,36 @@ for iter = 1:maxIter
             AtlasSet{ials} = als;   
         end
     end
-    
+    if updateR == 1
+         wdiag = 0; wsubdiag = 0; Numdiag = 0; Numsubdiag = 0;
+         for it = 1:nSource
+             tidx = sort(unique([it,find(M(it,:)>0)]));
+             col = clusters{it};
+%              Blk = clusterBlk{it}; 
+             Wit = G(tidx,clusters{it})*W(col,:);
+             ss = (Wit*Covy*Wit');
+             z = LFG(:,col)'*invGram*LFG(:,col);
+%              temp = diag(gamma(col)) - Cgamma(it).^2.*z;
+             temp = diag(gamma(col)) - diag(gamma(col))*z*diag(gamma(col));
+             temp = G(tidx,clusters{it})*temp*G(tidx,clusters{it})';
+             E_zz = (ss + temp)/nSamp;
+             wdiag = wdiag+sum(diag(E_zz));
+             Numdiag = Numdiag + numel(diag(E_zz));
+             wsubdiag = wsubdiag+sum(diag(E_zz,1)); 
+             Numsubdiag = Numsubdiag + numel(diag(E_zz,1));
+         end
+         newRcorr = (wsubdiag/Numsubdiag)/(wdiag/Numdiag);
+        newRcorr = min(0.9999,newRcorr);
+        newRcorr = max(newRcorr,0.6);
+        kratio = newRcorr/Rcorr;
+        Rcorr = newRcorr;
+        for it = 1:nSource
+            Blk = clusterBlk{it};          
+            G(:,clusters{it}) = G(:,clusters{it})*diag(sqrt(Blk.S*kratio+1-kratio)./sqrt(Blk.S));
+            clusterBlk{it}.S = Blk.S*kratio+1-kratio;
+        end
+        LFG = LF*G;         
+    end
 
     %% Cnoise update
     if updateCn == 1        
