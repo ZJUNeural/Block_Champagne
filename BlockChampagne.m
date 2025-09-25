@@ -21,6 +21,7 @@ updateCn = 0;
 updateR = 0; % use fixed r here
 maxIter = 50;
 epsilon = 1e-8;
+noiseWeight = eye(nSensor);
 nSamp = size(B,2); % snapshots
 if norm(B,'fro')<sqrt(numel(B))
     B = B./norm(B,'fro')*sqrt(numel(B));
@@ -51,13 +52,16 @@ if nargin>4
                 isextended = Value;
             case 'atlas'
                 Atlas = Value;
-                isAtlas = 1;                
+                isAtlas = 1; 
+            case 'noisemixmat'
+                noiseWeight = Value;
+                isextended = 1;
         end
     end
 end
 
 if isextended
-    LF = [L eye(nSensor)]; % leadfield: source & noise gain
+    LF = [L noiseWeight]; % leadfield: source & noise gain
     naSource = nSource+nSensor;
     M = blkdiag(MM^Knb,zeros(nSensor));
     M = M+eye(size(M));
