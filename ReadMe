@@ -1,4 +1,4 @@
-implemention of Block-Champagne in realistic data (code will be uploaded soon)
+implemention of Block-Champagne in realistic data 
 
 The SPM data contains multi-modality data from subjects undergoing face-processing task. The detailed information can be found in "A multi-subject, multi-modal human neuroimaging dataset". Here we provide the fMRI and ERP data from subject #15, following the guideline in SPM12 manual
 
